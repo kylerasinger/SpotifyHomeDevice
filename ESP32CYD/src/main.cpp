@@ -19,6 +19,7 @@
 #include <NTPClient.h>
 
 #include "Config.h"
+#include "Helper.h"
 #include "Display.h"
 #include "Touchscreen.h"
 #include "Spotify.h"
@@ -61,8 +62,6 @@ long trackProgressMs = 1;
 
 String previousTrack = "empty";
 
-
-
 int JPEGDraw(JPEGDRAW *pDraw)
 {
   // Stop further decoding as image is running off bottom of screen
@@ -76,7 +75,7 @@ int JPEGDraw(JPEGDRAW *pDraw)
   return 1;
 }
 
-void drawImageFromFile(const char* filename){
+void drawImageFromFile(const String filename){
   unsigned long lTime = millis();
   lTime = millis();
 
@@ -96,7 +95,7 @@ void drawImageFromFile(const char* filename){
   Serial.println(millis() - lTime);
 }
 
-void downloadImage(const char* url, const char* filename) {
+void downloadImage(const char* url, String filename) {
   drawWait(CENTERX, CENTERY, tft, true);
 
   Serial.println("Starting to download image: ");
@@ -149,16 +148,15 @@ void handleCurrentlyPlaying(CurrentlyPlaying currentlyPlaying)
     drawPause(CENTERX, CENTERY, tft, true);
   }
 
-  String filename = "/" + String(currentlyPlaying.trackName);
+  String filename = "/" + cleanFilename(String(currentlyPlaying.trackName));
   filename.replace(' ', '_');
   Serial.println(filename);
   
   if (filename != previousTrack) { //new track
     Serial.println("New track, deleting old art, downloading new. ");
-    Serial.println(previousTrack);
 
     SPIFFS.remove(previousTrack);
-    downloadImage(currentlyPlaying.albumImages[2].url, filename.c_str());
+    downloadImage(currentlyPlaying.albumImages[2].url, filename);
   }else{
     Serial.println("Old track, skipping art download and draw. ");
   }
@@ -269,7 +267,7 @@ void loop() {
 
   // Query of spotify
   if(millis() > requestDueTime){
-    Serial.println("getting currently playing song:");
+    Serial.println("Getting currently playing song:");
     uint16_t status = spotify.getCurrentlyPlaying(handleCurrentlyPlaying, SPOTIFY_MARKET);
 
     if (status == 200)
