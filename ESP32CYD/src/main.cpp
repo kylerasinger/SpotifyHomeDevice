@@ -149,9 +149,12 @@ void handleCurrentlyPlaying(CurrentlyPlaying currentlyPlaying)
   }
 
   String filename = "/" + cleanFilename(String(currentlyPlaying.trackName));
-  filename.replace(' ', '_');
+  Serial.println("Previously playing song is");
+  Serial.println(previousTrack);
+
+  Serial.println("Currently playing song is");
   Serial.println(filename);
-  
+
   if (filename != previousTrack) { //new track
     Serial.println("New track, deleting old art, downloading new. ");
 
@@ -171,6 +174,7 @@ void handleCurrentlyPlaying(CurrentlyPlaying currentlyPlaying)
   }
   featIndex = tempText.indexOf("(with");
   if (featIndex != -1) {
+      Serial.println("Found a (with");
       tempText = tempText.substring(0, featIndex);
       tempText.trim();
   }
@@ -198,6 +202,9 @@ void handleNextSong(){
 }
 
 void handlePrevSong(){
+  //prevent auto request for 30 seconds
+  requestDueTime = millis() + delayBetweenRequests;
+
   Serial.println("Prev song\n");
   drawPrev(CENTERX, CENTERY, tft, false);
   delay(300);
@@ -209,6 +216,9 @@ void handlePrevSong(){
 }
 
 void handlePause(){
+  //prevent auto request for 30 seconds
+  requestDueTime = millis() + delayBetweenRequests;
+
   Serial.println("Pausing song\n");
   drawPlay(CENTERX, CENTERY, tft, false);
   delay(300);
@@ -218,6 +228,9 @@ void handlePause(){
 }
 
 void handlePlay(){
+  //prevent auto request for 30 seconds
+  requestDueTime = millis() + delayBetweenRequests;
+
   Serial.println("Playing song\n");
   drawPause(CENTERX, CENTERY, tft, false);
   delay(300);
@@ -267,7 +280,6 @@ void loop() {
 
   // Query of spotify
   if(millis() > requestDueTime){
-    Serial.println("Getting currently playing song:");
     uint16_t status = spotify.getCurrentlyPlaying(handleCurrentlyPlaying, SPOTIFY_MARKET);
 
     if (status == 200)

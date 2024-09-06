@@ -11,6 +11,12 @@ String cleanFilename(String filename){
     filename = filename.substring(0, featIndex);
     filename.trim();
   }
+
+  uint16_t withIndex = filename.indexOf("(w");
+  if (withIndex != -1) {
+    filename = filename.substring(0, withIndex);
+    filename.trim();
+  }
   
   for(int i=0; i<filename.length(); i++){
     if(!((96 < filename[i] && filename[i] < 123) || filename[i] == 95 || (47 < filename[i] && filename[i] < 58))){
