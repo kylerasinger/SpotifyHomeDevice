@@ -2,7 +2,7 @@
 
 This project is an ESP32-based Spotify controller with a touchscreen interface. It features a user-friendly graphical interface for controlling Spotify playback, including play/pause, next, and previous track controls, and displays album art, track information, and a clock.
 
-![image](https://github.com/user-attachments/assets/ea32eac9-0d71-44bd-bd32-d76c12bd15a0)
+![image](https://github.com/user-attachments/assets/2da77d9d-9441-428a-9597-4b6cbc402b20)
 
 
 ## Features
